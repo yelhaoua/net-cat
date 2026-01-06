@@ -1,7 +1,7 @@
 package main
 
-import "net-cat/handlers"
+import "fmt"
 
 func main() {
-	handlers.ConnHandler()
+	fmt.Println("HHH")
 }
