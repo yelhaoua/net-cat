@@ -5,81 +5,50 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"sync"
 	"time"
-
-	"net-cat/structs"
 )
 
 var (
-	Clients   = make(map[net.Conn]*structs.Client)
-	Broadcast = make(chan string)
+	baner      = "Welcome to TCP-Chat!\n         _nnnn_\n        dGGGGMMb\n       @p~qp~~qMb\n       M|@||@) M|\n       @,----.JM|\n      JS^\\__/  qKL\n     dZP        qKRb\n    dZP          qKKb\n   fZP            SMMb\n   HZM            MMMM\n   FqM            MMMM\n __| \".        |\\dS\"qML\n |    `.       | `' \\Zq\n_)      \\.___.,|     .'\n\\____   )MMMMMP|   .'\n     `-'       `--'\n"
+	user       = make(map[net.Conn]string)
+	mu         = sync.Mutex{}
+	allMesages []string
 )
 
-func HandleClient(conn net.Conn) {
-	defer conn.Close()
-
-	client := GetName(conn)
-	if client == nil {
+func HandleClien(conn net.Conn) {
+	if len(user) >= 11 {
+		conn.Write([]byte("[ROME IS FULL]"))
+		mu.Lock()
+		delete(user, conn)
+		conn.Close()
+		mu.Unlock()
 		return
 	}
-
-	joinMsg := fmt.Sprintf("\n[%s] %s joined the chat",
-		time.Now().Format("2006-01-02 15:04:05"),
-		client.Name)
-	Broadcast <- joinMsg
-
-	scanner := bufio.NewScanner(conn)
-	for scanner.Scan() {
-		text := strings.TrimSpace(scanner.Text())
-		if text == "" {
-			continue
-		}
-
-		msg := fmt.Sprintf("\n[%s][%s]: %s",
-			time.Now().Format("2006-01-02 15:04:05"),
-			client.Name,
-			text)
-
-		Broadcast <- msg
-	}
-
-	delete(Clients, conn)
-	leaveMsg := fmt.Sprintf("[%s] %s left the chat",
-		time.Now().Format("2006-01-02 15:04:05"),
-		client.Name)
-	Broadcast <- leaveMsg
-}
-
-func GetName(conn net.Conn) *structs.Client {
-	reader := bufio.NewReader(conn)
-
+	conn.Write([]byte(baner))
+	name := GetName(conn)
+	fullMsg := fmt.Sprintf("\n%s has joined our chat...", name)
+	MesagesHestory(conn)
+	Send(fullMsg, conn)
 	for {
-		conn.Write([]byte("[Enter Your Name]: "))
-		name, err := reader.ReadString('\n')
+		TM := time.Now().Format("2006-01-02 15:04:05")
+		conn.Write([]byte(fmt.Sprintf("[%s][%s]:", TM, name)))
+		msg, err := bufio.NewReader(conn).ReadString('\n')
+		msg = strings.Trim(msg, "\r\n")
 		if err != nil {
-			return nil
+			mu.Lock()
+			delete(user, conn)
+			mu.Unlock()
+			fullMsg := fmt.Sprintf("\n%s has left our chat...", name)
+			Send(fullMsg, conn)
+			conn.Close()
+			return
 		}
-		name = strings.TrimSpace(name)
-
-		if name != "" {
-			client := &structs.Client{
-				Name: name,
-				Conn: conn,
-			}
-			Clients[conn] = client
-			return client
-		}
-	}
-}
-
-func Broadcaster() {
-	for msg := range Broadcast {
-		for _, client := range Clients {
-			fmt.Fprintln(client.Conn, msg)
-			fmt.Fprintf(client.Conn, "[%s][%s]: ",
-				time.Now().Format("2006-01-02 15:04:05"),
-				client.Name,
-			)
+		if strings.TrimSpace(msg) == "" || CheakName(msg) {
+			continue
+		} else {
+			fullMsg := fmt.Sprintf("[%s][%s]: [%s]", TM, name, msg)
+			Send(fullMsg, conn)
 		}
 	}
 }
