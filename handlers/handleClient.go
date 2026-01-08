@@ -17,7 +17,7 @@ var (
 )
 
 func HandleClien(conn net.Conn) {
-	if len(user) >= 11 {
+	if len(user) >= 10 {
 		conn.Write([]byte("[ROME IS FULL]"))
 		mu.Lock()
 		delete(user, conn)
@@ -48,7 +48,7 @@ func HandleClien(conn net.Conn) {
 		if msg == "" || CheakName(msg) {
 			continue
 		} else if len(msg) > 1000 {
-			// conn.Write([]byte("\033[31m[USERNAME IS ALREADY TAKEN.]\033[0m\n"))
+			conn.Write([]byte("\033[31m[WE CAN’T SEND A MESSAGE OVER 1000 CHARACTERS.]\033[0m\n"))
 		} else if strings.HasPrefix(msg, "--NC") {
 			arrCommand := strings.Split(msg, " ")
 			if len(arrCommand) > 3 {
