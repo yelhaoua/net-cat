@@ -27,7 +27,7 @@ func HandleClien(conn net.Conn) {
 	}
 	conn.Write([]byte(baner))
 	name := GetName(conn)
-	fullMsg := fmt.Sprintf("\n%s has joined our chat...", name)
+	fullMsg := fmt.Sprintf("%s has joined our chat...", name)
 	MesagesHestory(conn)
 	Send(fullMsg, conn)
 	for {
@@ -35,19 +35,31 @@ func HandleClien(conn net.Conn) {
 		conn.Write([]byte(fmt.Sprintf("[%s][%s]:", TM, name)))
 		msg, err := bufio.NewReader(conn).ReadString('\n')
 		msg = strings.Trim(msg, "\r\n")
+		msg = strings.TrimSpace(msg)
 		if err != nil {
 			mu.Lock()
 			delete(user, conn)
 			mu.Unlock()
-			fullMsg := fmt.Sprintf("\n%s has left our chat...", name)
+			fullMsg := fmt.Sprintf("%s has left our chat...", name)
 			Send(fullMsg, conn)
 			conn.Close()
 			return
 		}
-		if strings.TrimSpace(msg) == "" || CheakName(msg) {
+		if msg == "" || CheakName(msg) {
 			continue
+		} else if strings.HasPrefix(msg, "--tc") {
+			arrCommand := strings.Split(msg, " ")
+			if len(arrCommand) != 3 {
+				conn.Write([]byte("Invalide Command\n"))
+				continue
+			}
+			switch arrCommand[2] {
+			case "ch":
+				name = GetName(conn)
+			}
+
 		} else {
-			fullMsg := fmt.Sprintf("[%s][%s]: [%s]", TM, name, msg)
+			fullMsg := fmt.Sprintf("[%s][%s]:[%s]", TM, name, msg)
 			Send(fullMsg, conn)
 		}
 	}
