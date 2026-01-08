@@ -11,7 +11,7 @@ func Send(msg string, conn net.Conn) {
 
 	for add, name := range user {
 		if conn != add {
-			add.Write([]byte(fmt.Sprintf("%s\n", msg)))
+			add.Write([]byte(fmt.Sprintf("\n\033[36m%s\033[0m\n", msg)))
 			add.Write([]byte(fmt.Sprintf("[%s][%s]: ", TM, name)))
 		}
 	}

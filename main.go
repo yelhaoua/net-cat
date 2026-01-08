@@ -29,8 +29,8 @@ func main() {
 		fmt.Println("[USAGE]: ./TCPChat $port")
 		return
 	}
-	
-	fmt.Printf("Listening on the port :%s", Port)
+
+	fmt.Printf("Listening on the port :%s\n", Port)
 	ln, err := net.Listen("tcp", ":"+Port)
 	if err != nil {
 		fmt.Println("We Can Not Conect On this Port")
