@@ -16,6 +16,13 @@ var (
 	allMesages []string
 )
 
+/*
+
+HandleClien handle the client connection
+and redirect the messages to Send function
+
+*/
+
 func HandleClien(conn net.Conn) {
 	conn.Write([]byte("\033[33;1m" + baner + "\033[0m"))
 	name := GetName(conn)

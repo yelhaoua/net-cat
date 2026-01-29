@@ -6,6 +6,15 @@ import (
 	"strings"
 )
 
+/*
+
+AplyFlage apliy the --NC flage commands
+--NC h : show help about --NC commands
+--NC ch [NEW USER NAME] : change the user name to NEW USER NAME
+--NC users : show the list of online users
+
+*/
+
 func AplyFlage(msg string, name string, conn net.Conn) {
 	arrCommand := strings.Split(msg, " ")
 	if len(arrCommand) > 3 {
@@ -16,10 +25,19 @@ func AplyFlage(msg string, name string, conn net.Conn) {
 		conn.Write([]byte("\033[31m[?]	[USE --NC h FOR MORE INFO.]\033[0m\n"))
 		return
 	}
+
+	// Handle Commands
+
 	switch arrCommand[1] {
+
+	// Help Command
+
 	case "h":
 		conn.Write([]byte("\033[33m[IF YOU WANT CHANGE YOU NAME USE --NC ch [NEW USER NAME]]\033[0m\n"))
 		conn.Write([]byte("\033[33m[IF YOU WANT SEE ONLINE USERS USE --NC users]\033[0m\n"))
+
+	// Change Name Command
+
 	case "ch":
 		if !CheakName(arrCommand[2]) && !IsExiste(arrCommand[2]) && len(arrCommand[2]) <= 15 && len(arrCommand[2]) > 0 {
 			mu.Lock()
@@ -32,6 +50,9 @@ func AplyFlage(msg string, name string, conn net.Conn) {
 		} else {
 			conn.Write([]byte("\033[31m[USERNAME IS ALREADY TAKEN.]\033[0m\n"))
 		}
+
+	// Show Online Users Command
+
 	case "users":
 		mu.Lock()
 		var userList []string
@@ -40,6 +61,8 @@ func AplyFlage(msg string, name string, conn net.Conn) {
 		}
 		mu.Unlock()
 		conn.Write([]byte("\033[33m[ONLINE USERS]: \n" + strings.Join(userList, "\n") + "\033[0m\n"))
+
+	// Invalid Command
 	default:
 		conn.Write([]byte(fmt.Sprintf("\033[33m[%s NOT COMMAND IN --NC]\033[0m\n", arrCommand[1])))
 	}
