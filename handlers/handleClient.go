@@ -35,7 +35,7 @@ func HandleClien(conn net.Conn) {
 	reader := bufio.NewReader(conn)
 	for {
 		TM := time.Now().Format("2006-01-02 15:04:05")
-		conn.Write([]byte(fmt.Sprintf("[%s][%s]:", TM, name)))
+		conn.Write([]byte(fmt.Sprintf("[%s][%s]:", TM, user[conn])))
 		msg, err := reader.ReadString('\n')
 		msg = strings.Trim(msg, "\r\n")
 		msg = strings.TrimSpace(msg)
@@ -55,7 +55,7 @@ func HandleClien(conn net.Conn) {
 		} else if strings.HasPrefix(msg, "--NC") {
 			AplyFlage(msg, name, conn)
 		} else {
-			fullMsg := fmt.Sprintf("[%s][%s]:[%s]", TM, name, msg)
+			fullMsg := fmt.Sprintf("[%s][%s]:[%s]", TM, user[conn], msg)
 			Send(fullMsg, conn)
 		}
 	}

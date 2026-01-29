@@ -7,12 +7,10 @@ import (
 )
 
 /*
-
 AplyFlage apliy the --NC flage commands
 --NC h : show help about --NC commands
 --NC ch [NEW USER NAME] : change the user name to NEW USER NAME
 --NC users : show the list of online users
-
 */
 
 func AplyFlage(msg string, name string, conn net.Conn) {
@@ -43,10 +41,12 @@ func AplyFlage(msg string, name string, conn net.Conn) {
 			mu.Lock()
 			oldname := name
 			user[conn] = arrCommand[2]
-			name = arrCommand[2]
 			mu.Unlock()
+			name = arrCommand[2]
 			fullMsg := fmt.Sprintf("\033[34m%s Change His Name TO %s\033[0m", oldname, name)
 			Send(fullMsg, conn)
+			conn.Write([]byte(fmt.Sprintf("\033[32m[YOUR NAME CHANGED TO %s SUCCESSFULY]\033[0m\n", name)))
+
 		} else {
 			conn.Write([]byte("\033[31m[USERNAME IS ALREADY TAKEN.]\033[0m\n"))
 		}

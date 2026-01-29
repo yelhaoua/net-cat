@@ -35,10 +35,8 @@ func GetName(conn net.Conn) string {
 		if err != nil {
 			conn.Close()
 		}
-		if len(name) > 15 {
-			conn.Write([]byte("\033[31m[INVALID USERNAME. IT MUST BE LESS THAN 15 CHARACTERS.]\033[0m\n"))
-		} else if name == "" {
-			conn.Write([]byte("\033[31m[INVALID USERNAME. IT MUST BE MORE THAN 1 CHARACTER.]\033[0m\n"))
+		if len(name) > 15|| name == "" {
+			conn.Write([]byte("\033[31m[INVALID USERNAME. IT MUST BE LESS THAN 15 CHARACTERS. AND OVER THAN 0]\033[0m\n"))
 		} else if CheakName(name) {
 			conn.Write([]byte("\033[31m[INVALID USERNAME. IT MUST CONTAIN ONLY ENGLISH CHARACTERS.]\033[0m\n"))
 		} else if IsExiste(name) {
