@@ -2,47 +2,28 @@ package main
 
 import (
 	"fmt"
-	"net"
-	"os"
-	"strconv"
-
 	"net-cat/handlers"
+	"os"
 )
 
 func main() {
-	var Port string
+	// defaul port declared
+	port := ":8989"
 
-	if len(os.Args) == 2 {
-		Port = os.Args[1]
-		num, err := strconv.Atoi(Port)
-		if err != nil {
-			fmt.Println("Invalide Port Number")
-			return
-		}
-		if num < 1024 {
-			fmt.Println("Invalide Port Number chose Port over than 1023")
-			return
-		}
-	} else if len(os.Args) == 1 {
-		Port = "8989"
-	} else {
+	if len(os.Args) > 2 {
 		fmt.Println("[USAGE]: ./TCPChat $port")
 		return
 	}
-
-	fmt.Printf("Listening on the port :%s\n", Port)
-	ln, err := net.Listen("tcp", ":"+Port)
-	if err != nil {
-		fmt.Println("We Can Not Conect On this Port")
-		return
+	if len(os.Args) == 1 {
+		fmt.Println("Listening on the port :8989")
 	}
-
-	for {
-		conn, err := ln.Accept()
-		if err != nil {
-			fmt.Println("Errore in Conection Try Again Pleas")
-			continue
+	if len(os.Args) == 2{
+		if !handlers.PortCheck(os.Args[1]) {
+			fmt.Println("enter valid port number")
+			return
 		}
-		go handlers.HandleClien(conn)
+		port = ":" + os.Args[1]
+		fmt.Println("Listening on the port", port)
 	}
+	handlers.Listiner(port)
 }
