@@ -35,7 +35,7 @@ func HandleClien(conn net.Conn) {
 	Send(fullMsg, conn)
 	
 	for {
-		TM := time.Now().Format("2006-01-02 15:04:05")
+		TM := time.Now().Format(time.DateTime)
 		conn.Write([]byte(fmt.Sprintf("[%s][%s]:", TM, user[conn])))
 		msg, err := reader.ReadString('\n')
 		msg = strings.TrimSpace(msg)
