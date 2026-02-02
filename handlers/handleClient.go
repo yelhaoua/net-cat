@@ -24,20 +24,20 @@ and redirect the messages to Send function
 */
 
 func HandleClien(conn net.Conn) {
+	reader := bufio.NewReader(conn)
 	conn.Write([]byte("\033[33;1m" + baner + "\033[0m"))
-	name := GetName(conn)
+	name := GetName(conn, reader)
 	if name == "[ROME IS FULL]" {
 		return
 	}
 	fullMsg := fmt.Sprintf("\033[34m%s has joined our chat...\033[0m", name)
 	MesagesHestory(conn)
 	Send(fullMsg, conn)
-	reader := bufio.NewReader(conn)
+	
 	for {
 		TM := time.Now().Format("2006-01-02 15:04:05")
 		conn.Write([]byte(fmt.Sprintf("[%s][%s]:", TM, user[conn])))
 		msg, err := reader.ReadString('\n')
-		msg = strings.Trim(msg, "\r\n")
 		msg = strings.TrimSpace(msg)
 		if err != nil {
 			mu.Lock()

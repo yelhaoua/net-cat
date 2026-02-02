@@ -26,11 +26,10 @@ func IsExiste(name string) bool {
 	return false
 }
 
-func GetName(conn net.Conn) string {
+func GetName(conn net.Conn, reader *bufio.Reader) string {
 	for {
 		conn.Write([]byte("\033[32m[ENTER YOUR NAME]: \033[0m"))
-		name, err := bufio.NewReader(conn).ReadString('\n')
-		name = strings.Trim(name, "\r\n")
+		name, err := reader.ReadString('\n')
 		name = strings.TrimSpace(name)
 		if err != nil {
 			conn.Close()
@@ -54,7 +53,7 @@ func GetName(conn net.Conn) string {
 				return "[ROME IS FULL]"
 			}
 			mu.Lock()
-			user[conn] = strings.TrimSpace(name)
+			user[conn] = name
 			mu.Unlock()
 			return name
 		}
