@@ -43,8 +43,7 @@ func AplyFlage(msg string, name string, conn net.Conn) {
 			return
 		}
 		if CheckControlCharacters(arrCommand[2]) {
-			WriteInConnection(conn, "Enter A Valide USer Name")
-
+			WriteInConnection(conn, "Enter A Valide User Name")
 		} else if !IsExiste(arrCommand[2]) && len(arrCommand[2]) <= 15 && len(arrCommand[2]) > 0 {
 			mu.Lock()
 			oldname := name
