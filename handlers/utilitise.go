@@ -29,3 +29,14 @@ func IsRoomFull() bool {
 	defer mu.Unlock()
 	return len(user) < 10
 }
+
+func IsExiste(name string) bool {
+	mu.Lock()
+	defer mu.Unlock()
+	for _, userName := range user {
+		if name == userName {
+			return true
+		}
+	}
+	return false
+}

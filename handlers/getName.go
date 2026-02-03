@@ -6,17 +6,6 @@ import (
 	"strings"
 )
 
-func IsExiste(name string) bool {
-	mu.Lock()
-	defer mu.Unlock()
-	for _, userName := range user {
-		if name == userName {
-			return true
-		}
-	}
-	return false
-}
-
 func GetName(conn net.Conn, reader *bufio.Reader) string {
 	for {
 		fullMsg := "\033[32m[ENTER YOUR NAME]: \033[0m"
@@ -35,11 +24,11 @@ func GetName(conn net.Conn, reader *bufio.Reader) string {
 		} else if strings.HasPrefix(name, "--NC") {
 			fullMsg := "\033[31m[USERNAME CANNOT BE A RESERVED KEYWORD.]\033[0m\n\033[31m[USE --NC h FOR MORE INFO.]\033[0m\n"
 			WriteInConnection(conn, fullMsg)
-		} else if !IsRoomFull(){
+		} else if !IsRoomFull() {
 			fullMsg := "[ROME IS FULL]"
 			WriteInConnection(conn, fullMsg)
 			conn.Close()
-		}else{
+		} else {
 			mu.Lock()
 			user[conn] = name
 			mu.Unlock()
