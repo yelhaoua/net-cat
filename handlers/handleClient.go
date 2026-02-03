@@ -33,29 +33,31 @@ func HandleClien(conn net.Conn) {
 	fullMsg := fmt.Sprintf("\033[34m%s has joined our chat...\033[0m", name)
 	MesagesHestory(conn)
 	Send(fullMsg, conn)
-	
+
 	for {
 		TM := time.Now().Format(time.DateTime)
-		conn.Write([]byte(fmt.Sprintf("[%s][%s]:", TM, user[conn])))
+		_, connErr := conn.Write([]byte(fmt.Sprintf("[%s][%s]:", TM, user[conn])))
 		msg, err := reader.ReadString('\n')
-		msg = strings.TrimSpace(msg)
-		if err != nil {
-			mu.Lock()
-			delete(user, conn)
-			mu.Unlock()
+		if connErr != nil || err != nil {
+			HnadleErr(conn)
 			fullMsg := fmt.Sprintf("\033[34m%s has left our chat...\033[0m", name)
 			Send(fullMsg, conn)
 			conn.Close()
 			return
 		}
+		msg = strings.TrimSpace(msg)
 		if msg == "" {
 			continue
 		} else if len(msg) > 1000 {
-			conn.Write([]byte("\033[31m[WE CAN’T SEND A MESSAGE OVER 1000 CHARACTERS.]\033[0m\n"))
+			_, errconn := conn.Write([]byte("\033[31m[WE CAN’T SEND A MESSAGE OVER 1000 CHARACTERS.]\033[0m\n"))
+			if errconn != nil {
+				HnadleErr(conn)
+				return
+			}
 		} else if strings.HasPrefix(msg, "--NC") {
 			AplyFlage(msg, name, conn)
 		} else {
-			fullMsg := fmt.Sprintf("[%s][%s]:[%s]", TM, user[conn], msg)
+			fullMsg := fmt.Sprintf("[%s][%s]:%s", TM, user[conn], msg)
 			Send(fullMsg, conn)
 		}
 	}
