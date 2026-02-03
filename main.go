@@ -26,11 +26,7 @@ func main() {
 	if len(os.Args) == 1 {
 		fmt.Println("Listening on the port :8989")
 	}
-	if len(os.Args) == 2{
-		if !handlers.PortCheck(os.Args[1]) {
-			fmt.Println("enter valid port number")
-			return
-		}
+	if len(os.Args) == 2 {
 		port = ":" + os.Args[1]
 		fmt.Println("Listening on the port", port)
 	}
