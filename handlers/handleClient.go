@@ -48,7 +48,7 @@ func HandleClien(conn net.Conn) {
 			conn.Close()
 			return
 		}
-		if msg == "" || CheakName(msg) {
+		if msg == "" {
 			continue
 		} else if len(msg) > 1000 {
 			conn.Write([]byte("\033[31m[WE CAN’T SEND A MESSAGE OVER 1000 CHARACTERS.]\033[0m\n"))

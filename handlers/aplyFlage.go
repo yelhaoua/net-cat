@@ -41,7 +41,7 @@ func AplyFlage(msg string, name string, conn net.Conn) {
 			conn.Write([]byte("\033[31m[?]	Invalide Command USE --NC ch [NAME]\033[0m\n"))
 			return
 		}
-		if !CheakName(arrCommand[2]) && !IsExiste(arrCommand[2]) && len(arrCommand[2]) <= 15 && len(arrCommand[2]) > 0 {
+		if !IsExiste(arrCommand[2]) && len(arrCommand[2]) <= 15 && len(arrCommand[2]) > 0 {
 			mu.Lock()
 			oldname := name
 			user[conn] = arrCommand[2]
