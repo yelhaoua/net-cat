@@ -36,10 +36,10 @@ func HandleClien(conn net.Conn) {
 
 	for {
 		TM := time.Now().Format(time.DateTime)
-		_, connErr := conn.Write([]byte(fmt.Sprintf("[%s][%s]:", TM, user[conn])))
+		WriteInConnection(conn, fmt.Sprintf("[%s][%s]:", TM, user[conn]))
 		msg, err := reader.ReadString('\n')
-		if connErr != nil || err != nil {
-			WriteInConnection(conn, "Errore In Se")
+		if err != nil {
+			WriteInConnection(conn, "Errore In Sed")
 			fullMsg := fmt.Sprintf("\033[34m%s has left our chat...\033[0m", name)
 			Send(fullMsg, conn)
 			conn.Close()
@@ -56,9 +56,7 @@ func HandleClien(conn net.Conn) {
 		} else {
 			fullMsg := fmt.Sprintf("[%s][%s]:%s", TM, user[conn], msg)
 			Send(fullMsg, conn)
-			mu.Lock()
 			allMesages = append(allMesages, fullMsg)
-			mu.Unlock()
 		}
 	}
 }

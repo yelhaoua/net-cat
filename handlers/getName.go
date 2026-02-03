@@ -26,7 +26,7 @@ func GetName(conn net.Conn, reader *bufio.Reader) string {
 		if err != nil {
 			conn.Close()
 		}
-		if len(name) > 15 || name == "" {
+		if len(name) > 15 || name == "" || CheckControlCharacters(name) {
 			fullMsg := "\033[31m[INVALID USERNAME. IT MUST BE LESS THAN 15 CHARACTERS. AND OVER THAN 0]\033[0m\n"
 			WriteInConnection(conn, fullMsg)
 		} else if IsExiste(name) {

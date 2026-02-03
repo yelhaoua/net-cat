@@ -14,6 +14,7 @@ func CheckControlCharacters(message string) bool {
 func WriteInConnection(conn net.Conn, messege string) {
 	_, err := conn.Write([]byte(messege))
 	if err != nil {
+		conn.Write([]byte("Errore In Send Message\n"))
 		mu.Lock()
 		delete(user, conn)
 		mu.Unlock()
