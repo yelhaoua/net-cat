@@ -12,6 +12,7 @@ send the mesages to all connected clients except the sender
 
 func Send(msg string, conn net.Conn) {
 	time := time.Now().Format("2006-01-02 15:04:05")
+	
 	mu.Lock()
 	clien := make(map[net.Conn]string, len(user))
 	for c, n := range user {

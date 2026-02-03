@@ -1,6 +1,8 @@
 package handlers
 
-import "net"
+import (
+	"net"
+)
 
 func CheckControlCharacters(message string) bool {
 	for _, val := range message {
@@ -20,4 +22,10 @@ func WriteInConnection(conn net.Conn, messege string) {
 		mu.Unlock()
 		return
 	}
+}
+
+func IsRoomFull() bool {
+	mu.Lock()
+	defer mu.Unlock()
+	return len(user) < 10
 }

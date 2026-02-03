@@ -26,10 +26,9 @@ and redirect the messages to Send function
 func HandleClien(conn net.Conn) {
 	reader := bufio.NewReader(conn)
 	conn.Write([]byte("\033[33;1m" + baner + "\033[0m"))
+
 	name := GetName(conn, reader)
-	if name == "[ROME IS FULL]" {
-		return
-	}
+
 	fullMsg := fmt.Sprintf("\033[34m%s has joined our chat...\033[0m", name)
 	MesagesHestory(conn)
 	Send(fullMsg, conn)
@@ -39,7 +38,10 @@ func HandleClien(conn net.Conn) {
 		WriteInConnection(conn, fmt.Sprintf("[%s][%s]:", TM, user[conn]))
 		msg, err := reader.ReadString('\n')
 		if err != nil {
-			WriteInConnection(conn, "Errore In Sed")
+			WriteInConnection(conn, "\033[31mERROR IN SENDING MESSAGE\033[0m")
+			mu.Lock()
+			delete(user, conn)
+			mu.Unlock()
 			fullMsg := fmt.Sprintf("\033[34m%s has left our chat...\033[0m", name)
 			Send(fullMsg, conn)
 			conn.Close()
