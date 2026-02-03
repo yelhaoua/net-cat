@@ -57,7 +57,7 @@ func HandleClien(conn net.Conn) {
 			fullMsg := fmt.Sprintf("[%s][%s]:%s", TM, user[conn], msg)
 			Send(fullMsg, conn)
 			mu.Lock()
-			allMesages = append(allMesages, msg)
+			allMesages = append(allMesages, fullMsg)
 			mu.Unlock()
 		}
 	}
