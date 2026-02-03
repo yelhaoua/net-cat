@@ -17,14 +17,13 @@ func Send(msg string, conn net.Conn) {
 	for c, n := range user {
 		clien[c] = n
 	}
-	allMesages = append(allMesages, msg)
 	mu.Unlock()
 
 	// Send the Message to all Clients except the Sender
 	for add, receverName := range clien {
 		if conn != add {
-			add.Write([]byte(fmt.Sprintf("\n\033[36m%s\033[0m\n", msg)))
-			add.Write([]byte(fmt.Sprintf("[%s][%s]:", time, receverName)))
+			fullMsg := fmt.Sprintf("\n\033[36m%s\033[0m\n[%s][%s]:", msg, time, receverName)
+			WriteInConnection(add, fullMsg)
 		}
 	}
 }

@@ -39,26 +39,26 @@ func HandleClien(conn net.Conn) {
 		_, connErr := conn.Write([]byte(fmt.Sprintf("[%s][%s]:", TM, user[conn])))
 		msg, err := reader.ReadString('\n')
 		if connErr != nil || err != nil {
-			HnadleErr(conn)
+			WriteInConnection(conn, "Errore In Se")
 			fullMsg := fmt.Sprintf("\033[34m%s has left our chat...\033[0m", name)
 			Send(fullMsg, conn)
 			conn.Close()
 			return
 		}
 		msg = strings.TrimSpace(msg)
-		if msg == "" {
+		if msg == "" || CheckControlCharacters(msg) {
 			continue
 		} else if len(msg) > 1000 {
-			_, errconn := conn.Write([]byte("\033[31m[WE CAN’T SEND A MESSAGE OVER 1000 CHARACTERS.]\033[0m\n"))
-			if errconn != nil {
-				HnadleErr(conn)
-				return
-			}
+			WriteInConnection(conn, "\033[31m[WE CAN’T SEND A MESSAGE OVER 1000 CHARACTERS.]\033[0m\n")
+			return
 		} else if strings.HasPrefix(msg, "--NC") {
 			AplyFlage(msg, name, conn)
 		} else {
 			fullMsg := fmt.Sprintf("[%s][%s]:%s", TM, user[conn], msg)
 			Send(fullMsg, conn)
+			mu.Lock()
+			allMesages = append(allMesages, msg)
+			mu.Unlock()
 		}
 	}
 }

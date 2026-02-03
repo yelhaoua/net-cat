@@ -14,6 +14,6 @@ func MesagesHestory(conn net.Conn) {
 	copy(msgCopy, allMesages)
 	mu.Unlock()
 	for _, val := range msgCopy {
-		conn.Write([]byte(val + "\n"))
+		WriteInConnection(conn, val+"\n")
 	}
 }

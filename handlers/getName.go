@@ -19,25 +19,29 @@ func IsExiste(name string) bool {
 
 func GetName(conn net.Conn, reader *bufio.Reader) string {
 	for {
-		conn.Write([]byte("\033[32m[ENTER YOUR NAME]: \033[0m"))
+		fullMsg := "\033[32m[ENTER YOUR NAME]: \033[0m"
+		WriteInConnection(conn, fullMsg)
 		name, err := reader.ReadString('\n')
 		name = strings.TrimSpace(name)
 		if err != nil {
 			conn.Close()
 		}
-		if len(name) > 15|| name == "" {
-			conn.Write([]byte("\033[31m[INVALID USERNAME. IT MUST BE LESS THAN 15 CHARACTERS. AND OVER THAN 0]\033[0m\n"))
+		if len(name) > 15 || name == "" {
+			fullMsg := "\033[31m[INVALID USERNAME. IT MUST BE LESS THAN 15 CHARACTERS. AND OVER THAN 0]\033[0m\n"
+			WriteInConnection(conn, fullMsg)
 		} else if IsExiste(name) {
-			conn.Write([]byte("\033[31m[USERNAME IS ALREADY TAKEN.]\033[0m\n"))
+			fullMsg := "\033[31m[USERNAME IS ALREADY TAKEN.]\033[0m\n"
+			WriteInConnection(conn, fullMsg)
 		} else if strings.HasPrefix(name, "--NC") {
-			conn.Write([]byte("\033[31m[USERNAME CANNOT BE A RESERVED KEYWORD.]\033[0m\n"))
-			conn.Write([]byte("\033[31m[USE --NC h FOR MORE INFO.]\033[0m\n"))
+			fullMsg := "\033[31m[USERNAME CANNOT BE A RESERVED KEYWORD.]\033[0m\n\033[31m[USE --NC h FOR MORE INFO.]\033[0m\n"
+			WriteInConnection(conn, fullMsg)
 		} else {
 			mu.Lock()
 			roomFull := len(user) > 9
 			mu.Unlock()
 			if roomFull {
-				conn.Write([]byte("[ROME IS FULL]"))
+				fullMsg := "[ROME IS FULL]"
+				WriteInConnection(conn, fullMsg)
 				conn.Close()
 				return "[ROME IS FULL]"
 			}
